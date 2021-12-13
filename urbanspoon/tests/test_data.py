@@ -1,1 +1,0 @@
-from urbanspoon import data

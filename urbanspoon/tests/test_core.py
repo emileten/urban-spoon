@@ -1,36 +1,63 @@
 import numpy as np
+import pytest
+from urbanspoon.tests.conftest import time_series_factory, spatio_temporal_gcm_factory, spatial_gcm_factory
 from urbanspoon import core
-import xarray as xr
+
+def test_xr_year_average():
+
+    fakedata = spatio_temporal_gcm_factory(x=np.array([1, 2, 3, 4])[:, np.newaxis, np.newaxis], lat=np.ones(1), lon=np.ones(1))
+    actual = core.xr_year_average(fakedata)
+    assert actual.shape == (1, 1, 1)
+    assert actual.values[0, 0, 0] == 2.5
 
 
-def _timeseriesfactory():
-    x = np.random.rand(365)
+def test_xr_conditional_time_average():
 
-    if x.ndim != 1:
-        raise ValueError("'x' needs dim of one")
-
-    time = xr.cftime_range(
-        start="1995-01-01", freq="D", periods=len(x), calendar="standard"
-    )
-
-    return xr.DataArray(x, {"time": time}, ["time"])
+    fakedata = spatio_temporal_gcm_factory(x=np.array([1, 2, 3, 4])[:, np.newaxis, np.newaxis], lat=np.ones(1), lon=np.ones(1))
+    actual = core.xr_conditional_time_average(fakedata, ('1995-01-01', '1995-01-02'))
+    assert actual.shape == (1, 1)
+    assert actual.values[0, 0] == 1.5
 
 
-def _gcmfactory():
 
-    lat = np.arange(-90, 90.5, 0.5)
-    lon = np.arange(-180, 180.5, 0.5)
-    x = np.random.rand(len(lon), len(lat))
-    return xr.DataArray(x, {"lon": lon, "lat": lat}, ["lon", "lat"])
+def test_xr_weighted_spatial_average():
+    fakedata = spatial_gcm_factory(x=np.array([[1,2], [3,4]]), lat=np.array([1, 2]), lon=np.array([1,2]))
+    num = (1 * np.cos(1 * np.pi / 180.0) + 2 * np.cos(2 * np.pi / 180.0) + 3 * np.cos(1 * np.pi / 180.0) + 4 * np.cos(2 * np.pi / 180.0))
+    den = np.cos(1 * np.pi / 180.0)*2 + np.cos(2 * np.pi / 180.0)*2
+    expected = num/den
+    actual = core.xr_weighted_spatial_average(fakedata)
+    assert actual.shape == ()
+    np.testing.assert_almost_equal(expected, actual.values.item())
+
+
+@pytest.mark.skip(reason="unimplemented")
+def test_xr_conditional_count():
+
+    #TODO
+    raise NotImplementedError
+
+
+@pytest.mark.skip(reason="unimplemented")
+def test_xc_maximum_consecutive_dry_days():
+
+    #TODO
+    raise NotImplementedError
+
+
+@pytest.mark.skip(reason="unimplemented")
+def test_xc_rx5day():
+
+    #TODO
+    raise NotImplementedError
 
 
 def test_plot_colored_maps():
     """
     Checking it runs
     """
-    fakedata = {"A": _gcmfactory(), "B": _gcmfactory()}
+    fakedata = {"A": spatial_gcm_factory(), "B": spatial_gcm_factory()}
     core.plot_colored_maps(
-        ds=fakedata, common_title="sometitle", units="someunits", color_bar_range=(0, 1)
+        da=fakedata, common_title="sometitle", units="someunits", color_bar_range=(0, 1)
     )
 
 
@@ -40,12 +67,12 @@ def test_plot_colored_timeseries():
     Checking it runs
     """
     fakedata = {
-        "A": {"temporal_data": _timeseriesfactory(), "linestyle": ":", "color": "blue"},
+        "A": {"temporal_data": time_series_factory(), "linestyle": ":", "color": "blue"},
         "B": {
-            "temporal_data": _timeseriesfactory(),
+            "temporal_data": time_series_factory(),
             "linestyle": ":",
             "color": "black",
         },
     }
 
-    core.plot_colored_timeseries(fakedata, "sometitle", "someunits")
+    core.plot_colored_timeseries(da=fakedata, title="sometitle", units="someunits")

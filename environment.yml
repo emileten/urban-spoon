@@ -12,3 +12,4 @@ dependencies:
   - pytest
   - black
   - nc-time-axis
+  - zarr

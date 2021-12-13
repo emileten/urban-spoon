@@ -6,44 +6,93 @@ import cartopy.feature as cfeature
 from matplotlib import cm
 import xclim as xc
 
+def xr_year_average(da):
+    """
+    collapses the time dimension of an array to the year level
 
-def _compute_gmst(da, lat_name="lat", lon_name="lon"):
-    lat_weights = np.cos(da[lat_name] * np.pi / 180.0)
-    ones = xr.DataArray(np.ones(da.shape), dims=da.dims, coords=da.coords)
-    weights = ones * lat_weights
-    masked_weights = weights.where(~da.isnull(), 0)
+    Parameters
+    ----------
+    da: xr.DataArray
+        with 'time' dimension
 
-    gmst = (da * masked_weights).sum(dim=(lat_name, lon_name)) / (masked_weights).sum(
-        dim=(lat_name, lon_name)
-    )
+    Returns
+    -------
+    xr.DataArray with a 'year' dimension instead of 'time'
+    """
 
-    return gmst
+    return da.groupby("time.year").mean()
+
+def xr_conditional_time_average(da, time_slice=None):
+    """
+    Slices a data along 'time' and then averages along 'time'.
+
+    Parameters
+    ----------
+    da : xr.DataArray
+        with 'time' dimension
+    time_slice : tuple of str or None
+        first and last date of sub-period to keep.
+    Returns
+    ------
+    data array with 'time' dropped
+    """
+
+    return da.sel(time=slice(time_slice[0], time_slice[1])).mean("time")
+
+def xr_weighted_spatial_average(da, weighting="GMST"):
+
+    """
+    weighted average of a data array across the 'lon' and 'lat' dimensions.
+
+    Parameters
+    ----------
+    da: xr.DataArray
+        with 'lon' and 'lat' dimensions.
+    weighting: str
+        One of ["GMST"].
+    Returns
+    -------
+    data array without 'lon' and 'lat' dimensions.
+    """
+    if weighting=="GMST":
+        lat_weights = np.cos(da["lat"] * np.pi / 180.0)
+        ones = xr.DataArray(np.ones(da.shape), dims=da.dims, coords=da.coords)
+        weights = ones * lat_weights
+        masked_weights = weights.where(~da.isnull(), 0)
+
+        out = (da * masked_weights).sum(dim=("lat", "lon")) / (masked_weights).sum(
+            dim=("lat", "lon")
+        )
+    else:
+        raise ValueError(f"{weighting} is an unknown weighting scheme")
+
+    return out
 
 
-def xr_conditional_count(ds, threshold=95, convert=lambda x: (x - 32) * 5 / 9 + 273.15):
+def xr_conditional_count(da, threshold=95, convert=lambda x: (x - 32) * 5 / 9 + 273.15):
     if convert is not None:
         threshold = convert(threshold)
-    ds = ds.where(ds > threshold)
-    return ds.groupby(ds.time.dt.year).count().rename({"year": "time"})
+    da = da.where(da > threshold)
+    return da.groupby("time.year").count()
 
 
-def xc_maximum_consecutive_dry_days(ds, thresh=0.0005):
+def xc_maximum_consecutive_dry_days(da, thresh=0.0005):
     return xc.indicators.atmos.maximum_consecutive_dry_days(
-        ds, thresh=thresh, freq="YS"
+        da, thresh=thresh, freq="YS"
     )
 
 
-def xc_RX5day(ds):
-    return xc.indicators.icclim.RX5day(ds, freq="YS")
+def xc_rx5day(da):
+    return xc.indicators.icclim.RX5day(da, freq="YS")
 
 
-def plot_colored_maps(ds, common_title, units, color_bar_range):
+def plot_colored_maps(da, common_title, units, color_bar_range):
     """
     Produces a grid of maps colored with the data of a sequence of arrays containing lon and lat dimensions.
 
     Parameters
     ----------
-    ds : dict
+    da : dict
         keys are str pointing to xr.DataArray objects with lat and lon dimension
     common_title : str
     units : str
@@ -51,13 +100,13 @@ def plot_colored_maps(ds, common_title, units, color_bar_range):
     """
 
     fig, axes = plt.subplots(
-        1, len(ds), figsize=(45, 12), subplot_kw={"projection": ccrs.PlateCarree()}
+        1, len(da), figsize=(45, 12), subplot_kw={"projection": ccrs.PlateCarree()}
     )
     cmap = cm.cividis
     i = 0
-    for name, subds in ds.items():
+    for name, subda in da.items():
 
-        im = subds.plot(
+        im = subda.plot(
             ax=axes[i],
             cmap=cmap,
             transform=ccrs.PlateCarree(),
@@ -82,23 +131,22 @@ def plot_colored_maps(ds, common_title, units, color_bar_range):
     cbar_title = units
     cbar = fig.colorbar(im, cax=cbar_ax, label=cbar_title, orientation="horizontal")
 
-
-def plot_colored_timeseries(ds, title, units):
+def plot_colored_timeseries(da, title, units):
 
     """
     Produces overlayed colored line graphs from data sequences that have a time dimension.
 
     Parameters
     ----------
-    ds : dict
+    da : dict
         keys are str pointing to a dict['temporal_data', 'color', 'linestyle']. The former entry is a xr.DataArray object.
     title : str
     units : str
     """
 
     fig = plt.figure(figsize=(12, 4))
-    for name, material in ds.items():
-        subds = material["temporal_data"]
-        subds.plot(label=name, linestyle=material["linestyle"], color=material["color"])
+    for name, material in da.items():
+        subda = material["temporal_data"]
+        subda.plot(label=name, linestyle=material["linestyle"], color=material["color"])
     plt.legend()
     plt.title("{} {}".format(title, units))
