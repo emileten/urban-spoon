@@ -6,7 +6,18 @@ def map_bidecadal_time_average(
 ):
 
     """
-    Produces a series of maps colored by bidecadal averages of 'var' from an input dataset path
+    Produces a series of maps colored by bidecadal averages of 'var' from an input dataset path.
+
+    Parameters
+    ---------
+    inputfile : str
+        path to data file
+    var : str
+        variable name in dataset
+    color_bar_range: tuple of float
+    outputfile: str
+        path to file containing output figure, with format suffix
+    format: str
     """
 
     da = repository.read_array(inputfile, var)
