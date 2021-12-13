@@ -1,2 +1,2 @@
 # urban-spoon
-small repo to validate CMIP
+small repo to validate downscaledCMIP6
