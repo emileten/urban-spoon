@@ -23,6 +23,7 @@ def read_dataset(url_or_path):
     logger.info(f"Read {url_or_path}")
     return x
 
+
 def read_array(url_or_path, var):
     """Read Dataset from Zarr store and pull array.
 
@@ -55,6 +56,7 @@ def write_colored_maps(out, format, **kwargs):
 
     core.plot_colored_maps(**kwargs)
     plt.savefig(fname=out, format=format)
+
 
 def write_colored_timeseries(out, format, **kwargs):
     """

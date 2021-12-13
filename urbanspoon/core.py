@@ -6,6 +6,7 @@ import cartopy.feature as cfeature
 from matplotlib import cm
 import xclim as xc
 
+
 def xr_year_average(da):
     """
     collapses the time dimension of an array to the year level
@@ -22,7 +23,10 @@ def xr_year_average(da):
 
     return da.groupby("time.year").mean()
 
-def xr_bidecadal_time_average(da, slices=[("2020", "2040"), ("2040", "2060"), ("2060", "2080"), ("2080", "2100")]):
+
+def xr_bidecadal_time_average(
+    da, slices=[("2020", "2040"), ("2040", "2060"), ("2060", "2080"), ("2080", "2100")]
+):
 
     """
     Averages multiple 'time' slices of a data array.
@@ -42,6 +46,7 @@ def xr_bidecadal_time_average(da, slices=[("2020", "2040"), ("2040", "2060"), ("
         results[f"{sl[0]}_{sl[1]}"] = xr_conditional_time_average(da=da, time_slice=sl)
     return results
 
+
 def xr_conditional_time_average(da, time_slice=None):
     """
     Slices a data along 'time' and then averages along 'time'.
@@ -59,6 +64,7 @@ def xr_conditional_time_average(da, time_slice=None):
 
     return da.sel(time=slice(time_slice[0], time_slice[1])).mean("time")
 
+
 def xr_weighted_spatial_average(da, weighting="GMST"):
 
     """
@@ -74,7 +80,7 @@ def xr_weighted_spatial_average(da, weighting="GMST"):
     -------
     data array without 'lon' and 'lat' dimensions.
     """
-    if weighting=="GMST":
+    if weighting == "GMST":
         lat_weights = np.cos(da["lat"] * np.pi / 180.0)
         ones = xr.DataArray(np.ones(da.shape), dims=da.dims, coords=da.coords)
         weights = ones * lat_weights
@@ -150,6 +156,7 @@ def plot_colored_maps(da, common_title, units, color_bar_range):
     # Draw the colorbar
     cbar_title = units
     cbar = fig.colorbar(im, cax=cbar_ax, label=cbar_title, orientation="horizontal")
+
 
 def plot_colored_timeseries(da, title, units):
 
