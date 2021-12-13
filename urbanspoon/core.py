@@ -45,7 +45,7 @@ def plot_colored_maps(ds, common_title, units, color_bar_range):
     ----------
     ds : dict
         keys are str pointing to xr.DataArray objects with lat and lon dimension
-    title : str
+    common_title : str
     units : str
     color_bar_range : tuple
     """
@@ -68,7 +68,7 @@ def plot_colored_maps(ds, common_title, units, color_bar_range):
 
         axes[i].coastlines()
         axes[i].add_feature(cfeature.BORDERS, linestyle=":")
-        axes[ind].set_title("{} {}".format(title, name))
+        axes[i].set_title("{} {}".format(common_title, name))
 
     # Adjust the location of the subplots on the page to make room for the colorbar
     fig.subplots_adjust(
@@ -79,7 +79,7 @@ def plot_colored_maps(ds, common_title, units, color_bar_range):
     cbar_ax = fig.add_axes([0.2, 0.2, 0.6, 0.06])
 
     # Draw the colorbar
-    cbar_title = "{} ({})".format(variable, units)
+    cbar_title = units
     cbar = fig.colorbar(im, cax=cbar_ax, label=cbar_title, orientation="horizontal")
 
 
@@ -97,7 +97,7 @@ def plot_colored_timeseries(ds, title, units):
     """
 
     fig = plt.figure(figsize=(12, 4))
-    for name, material in ds:
+    for name, material in ds.items():
         subds = material["temporal_data"]
         subds.plot(label=name, linestyle=material["linestyle"], color=material["color"])
     plt.legend()

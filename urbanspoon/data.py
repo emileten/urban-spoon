@@ -198,7 +198,7 @@ def collect_paths(manifest, gcm="GFDL-ESM4", ssp="ssp370", var="tasmax"):
     return data_dict
 
 
-def build_data_paths_dict(infile, outfile, var, ssp):
+def build_data_paths_dict(infile, outfile, var, ssp, argo_token):
     """
     Takes a json containing variable-ssp-gcm-workflow ids, picks one variable-ssp,
     and retrieves and parses worfklow manifests associated with each gcm, storing data paths.
@@ -212,6 +212,7 @@ def build_data_paths_dict(infile, outfile, var, ssp):
         path to json
     gcm: str
     var: str
+    argo_token: str
     """
 
     results = {}
@@ -229,7 +230,7 @@ def build_data_paths_dict(infile, outfile, var, ssp):
             auth_token=argo_token,
             workflow_location=workflow_location,
         )
-        results[gcm] = collect_paths(manifest, gcm, ssp, variable)
+        results[gcm] = collect_paths(manifest, gcm, ssp, var)
 
     with open(outfile, "w") as outputfile:
         json.dump(results, outputfile)
