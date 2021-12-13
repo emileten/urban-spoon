@@ -11,6 +11,15 @@ def test_xr_year_average():
     assert actual.values[0, 0, 0] == 2.5
 
 
+def test_xr_bidecadal_time_average():
+    fakedata = spatio_temporal_gcm_factory(x=np.ones(720)[:, np.newaxis, np.newaxis], lat=np.ones(1),
+                                           lon=np.ones(1))
+    actual = core.xr_bidecadal_time_average(fakedata, [('1995', '1996'), ('1996','1997')])
+    assert all(x in actual for x in ['1995_1996', '1996_1997'])
+    assert actual['1995_1996'].shape == (1, 1)
+    assert actual['1995_1996'].values[0, 0] == 1
+
+
 def test_xr_conditional_time_average():
 
     fakedata = spatio_temporal_gcm_factory(x=np.array([1, 2, 3, 4])[:, np.newaxis, np.newaxis], lat=np.ones(1), lon=np.ones(1))

@@ -22,6 +22,26 @@ def xr_year_average(da):
 
     return da.groupby("time.year").mean()
 
+def xr_bidecadal_time_average(da, slices=[("2020", "2040"), ("2040", "2060"), ("2060", "2080"), ("2080", "2100")]):
+
+    """
+    Averages multiple 'time' slices of a data array.
+
+    Parameters
+    ----------
+    da : xr.DataArray
+        with 'time' dimension
+    slices : list of tuple of str
+    Returns
+    ------
+    dict of data array each key representing the given slice
+    """
+
+    results = {}
+    for sl in slices:
+        results[f"{sl[0]}_{sl[1]}"] = xr_conditional_time_average(da=da, time_slice=sl)
+    return results
+
 def xr_conditional_time_average(da, time_slice=None):
     """
     Slices a data along 'time' and then averages along 'time'.
