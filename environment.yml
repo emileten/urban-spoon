@@ -1,0 +1,11 @@
+name: urban-spoon
+channels:
+  - conda-forge
+dependencies:
+  - matplotlib
+  - xarray 
+  - gcsfs 
+  - numpy 
+  - matplotlib
+  - cartopy 
+  - xclim
