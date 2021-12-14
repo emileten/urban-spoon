@@ -4,6 +4,17 @@ import matplotlib.pyplot as plt
 
 logger = logging.getLogger(__name__)
 
+def write_dataset(ds, url_or_path):
+    """
+    Writes dataset. Testing purpose.
+
+    Parameters
+    ----------
+    ds : xr.Dataset
+    url_or_path : str
+    """
+    #TODO handle chunking 
+    ds.to_zarr(url_or_path, mode="w")
 
 def read_dataset(url_or_path):
     """Read Dataset from Zarr store
