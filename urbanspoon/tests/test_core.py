@@ -60,9 +60,15 @@ def test_xr_weighted_spatial_average():
     assert actual.shape == ()
     np.testing.assert_almost_equal(expected, actual.values.item())
 
+@pytest.mark.skip(reason="unimplemented")
+def test_xr_collapse_to_time_series():
+
+    # TODO
+    raise NotImplementedError
+
 
 @pytest.mark.skip(reason="unimplemented")
-def test_xr_conditional_count():
+def test_xr_yearly_count():
 
     # TODO
     raise NotImplementedError

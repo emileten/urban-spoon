@@ -18,8 +18,27 @@ def period_average(
     periods: list of tuple of str
     """
 
-    #TODO first two lines of map_period_average + write dataset
-    Raise NotImplementedError
+    #TODO
+    raise NotImplementedError
+
+def collapse_to_time_series(
+    inputfile, var, outputfile,
+):
+
+    """
+    Produces a time series from collapsed data array.
+
+    Parameters
+    ---------
+    inputfile : str
+        path to data file.
+    var : str
+        variable name in dataset
+    outputfile: str or None
+    """
+
+    #TODO
+    raise NotImplementedError
 
 def map_period_average(
     inputfile, var, color_bar_range, outputfile, periods=[("2020", "2040"), ("2040", "2060"), ("2060", "2080"), ("2080", "2100")], format="png"

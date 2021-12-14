@@ -6,30 +6,28 @@ import cartopy.feature as cfeature
 from matplotlib import cm
 import xclim as xc
 
-
-def xr_year_average(da):
+def xr_collapse_to_time_series(da):
     """
-    collapses the time dimension of an array to the year level
+    Collapses an array across days of a year and then across space.
 
     Parameters
     ----------
     da: xr.DataArray
-        with 'time' dimension
+        with 'time', 'lon' and 'lat' dimensions.
 
     Returns
     -------
-    xr.DataArray with a 'year' dimension instead of 'time'
+    xr.DataArray with only a 'year' dimension.
     """
 
-    return da.groupby("time.year").mean()
-
+    raise NotImplementedError
 
 def xr_period_average(
     da, slices=[("2020", "2040"), ("2040", "2060"), ("2060", "2080"), ("2080", "2100")]
 ):
 
     """
-    Averages multiple 'time' slices of a data array.
+    Groups an array by time slices and collapses each slice across time.
 
     Parameters
     ----------
@@ -49,7 +47,7 @@ def xr_period_average(
 
 def xr_conditional_time_average(da, time_slice=None):
     """
-    Slices a data along 'time' and then averages along 'time'.
+    Slices an array along time and averages across time.
 
     Parameters
     ----------
@@ -64,11 +62,26 @@ def xr_conditional_time_average(da, time_slice=None):
 
     return da.sel(time=slice(time_slice[0], time_slice[1])).mean("time")
 
+def xr_year_average(da):
+    """
+    Collapses an array across days of each year.
+
+    Parameters
+    ----------
+    da: xr.DataArray
+        with 'time' dimension
+
+    Returns
+    -------
+    xr.DataArray with a 'year' dimension instead of 'time'
+    """
+
+    return da.groupby("time.year").mean()
 
 def xr_weighted_spatial_average(da, weighting="GMST"):
 
     """
-    weighted average of a data array across the 'lon' and 'lat' dimensions.
+    Collapses an array across weighted longitude and latitude.
 
     Parameters
     ----------
@@ -94,12 +107,21 @@ def xr_weighted_spatial_average(da, weighting="GMST"):
 
     return out
 
+def xr_yearly_count(da, count_above=95.):
 
-def xr_conditional_count(da, threshold=95, convert=lambda x: (x - 32) * 5 / 9 + 273.15):
-    if convert is not None:
-        threshold = convert(threshold)
-    da = da.where(da > threshold)
-    return da.groupby("time.year").count()
+    """
+    Parameters
+    ----------
+    da: xr.DataArray
+        with 'time' dimensions.
+    count_above: float
+
+    Returns
+    -------
+    data array with a 'year' dimension instead of 'time'.
+    """
+
+    return da.where(da > count_above).groupby("time.year").count()
 
 
 def xc_maximum_consecutive_dry_days(da, thresh=0.0005):
