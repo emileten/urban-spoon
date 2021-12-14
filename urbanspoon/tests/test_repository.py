@@ -2,7 +2,7 @@ from xarray import Dataset
 import os
 import numpy as np
 import tempfile
-from urbanspoon import repository
+from urbanspoon import repository, core
 from urbanspoon.tests.conftest import (
     time_series_factory,
     spatial_gcm_factory,
@@ -29,9 +29,10 @@ def test_write_colored_maps():
 
     fakedata = {"A": spatial_gcm_factory(), "B": spatial_gcm_factory()}
     with tempfile.NamedTemporaryFile() as outfile:
-        repository.write_colored_maps(
+        repository.write_plot(
             out=f"{outfile.name}.png",
             format="png",
+            plot_func=core.plot_colored_maps,
             da=fakedata,
             common_title="sometitle",
             units="someunits",
@@ -56,9 +57,10 @@ def test_write_colored_timeseries():
     }
 
     with tempfile.NamedTemporaryFile() as outfile:
-        repository.write_colored_timeseries(
+        repository.write_plot(
             out=f"{outfile.name}.png",
             format="png",
+            plot_func=core.plot_colored_timeseries,
             da=fakedata,
             title="sometitle",
             units="someunits",

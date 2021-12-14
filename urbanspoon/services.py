@@ -24,9 +24,10 @@ def map_period_average(
 
     da = repository.read_array(inputfile, var)
     da_dict = core.xr_period_average(da=da, slices=periods)
-    repository.write_colored_maps(out=outputfile,
-                                  format=format,da=da_dict,
-                                  common_title=f"{var} bidecadal average",
-                                  color_bar_range=color_bar_range,
-                                  units=da.attrs["units"]
-                                  )
+    repository.write_plot(out=outputfile,
+                          format=format,da=da_dict,
+                          plot_func=core.plot_colored_maps,
+                          common_title=f"{var} bidecadal average",
+                          color_bar_range=color_bar_range,
+                          units=da.attrs["units"]
+                          )

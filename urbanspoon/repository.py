@@ -1,6 +1,5 @@
 import xarray as xr
 import logging
-from urbanspoon import core
 import matplotlib.pyplot as plt
 
 logger = logging.getLogger(__name__)
@@ -40,7 +39,7 @@ def read_array(url_or_path, var):
     return read_dataset(url_or_path)[var]
 
 
-def write_colored_maps(out, format, **kwargs):
+def write_plot(out, format, plot_func, **kwargs):
     """
     runs core.plot_colored_maps and writes to disk a given representation of it.
 
@@ -50,26 +49,10 @@ def write_colored_maps(out, format, **kwargs):
         path where to write the file
     format : str
         'png'
+    plotfunc : func
     kwargs :
-        additional arguments passed to core.plot_colored_maps
+        arguments passed to `plotfunc`.
     """
 
-    core.plot_colored_maps(**kwargs)
-    plt.savefig(fname=out, format=format)
-
-
-def write_colored_timeseries(out, format, **kwargs):
-    """
-    runs core.plot_colored_timeseries and writes to disk a given representation of it.
-
-    Parameters
-    ----------
-    out : str
-        path where to write the file
-    format : str
-    kwargs :
-        additional arguments passed to core.plot_colored_timeseries
-    """
-
-    core.plot_colored_timeseries(**kwargs)
+    plot_func(**kwargs)
     plt.savefig(fname=out, format=format)
