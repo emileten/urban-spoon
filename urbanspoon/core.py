@@ -125,8 +125,10 @@ def plot_colored_maps(da, common_title, units, color_bar_range):
     color_bar_range : tuple
     """
 
+    #TODO : color bar lies on the map. Consider parameterizing figure aesthetics.
+
     fig, axes = plt.subplots(
-        1, len(da), figsize=(45, 12), subplot_kw={"projection": ccrs.PlateCarree()}
+        1, len(da), figsize=(30, 8), subplot_kw={"projection": ccrs.PlateCarree()}
     )
     cmap = cm.cividis
     i = 0
@@ -145,6 +147,7 @@ def plot_colored_maps(da, common_title, units, color_bar_range):
         axes[i].add_feature(cfeature.BORDERS, linestyle=":")
         axes[i].set_title("{} {}".format(common_title, name))
 
+        i = i + 1
     # Adjust the location of the subplots on the page to make room for the colorbar
     fig.subplots_adjust(
         bottom=0.02, top=0.9, left=0.05, right=0.95, wspace=0.1, hspace=0.01
