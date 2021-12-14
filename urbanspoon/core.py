@@ -24,7 +24,7 @@ def xr_year_average(da):
     return da.groupby("time.year").mean()
 
 
-def xr_bidecadal_time_average(
+def xr_period_average(
     da, slices=[("2020", "2040"), ("2040", "2060"), ("2060", "2080"), ("2080", "2100")]
 ):
 

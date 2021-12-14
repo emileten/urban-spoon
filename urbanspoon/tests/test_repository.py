@@ -1,4 +1,4 @@
-from xarray import Dataset, open_zarr
+from xarray import Dataset
 import os
 import numpy as np
 import tempfile
@@ -6,7 +6,6 @@ from urbanspoon import repository
 from urbanspoon.tests.conftest import (
     time_series_factory,
     spatial_gcm_factory,
-    spatio_temporal_gcm_factory,
 )
 
 

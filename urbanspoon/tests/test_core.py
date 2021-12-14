@@ -20,11 +20,11 @@ def test_xr_year_average():
     assert actual.values[0, 0, 0] == 2.5
 
 
-def test_xr_bidecadal_time_average():
+def test_xr_period_average():
     fakedata = spatio_temporal_gcm_factory(
         x=np.ones(720)[:, np.newaxis, np.newaxis], lat=np.ones(1), lon=np.ones(1)
     )
-    actual = core.xr_bidecadal_time_average(
+    actual = core.xr_period_average(
         fakedata, [("1995", "1996"), ("1996", "1997")]
     )
     assert all(x in actual for x in ["1995_1996", "1996_1997"])
