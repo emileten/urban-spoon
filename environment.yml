@@ -1,4 +1,4 @@
-name: urban-spoon
+name: urbanspoon
 channels:
   - conda-forge
 dependencies:
@@ -8,8 +8,10 @@ dependencies:
   - numpy 
   - matplotlib
   - cartopy 
-  - xclim
   - pytest
   - black
   - nc-time-axis
   - zarr
+  - dask
+  - pip:
+      - git+https://github.com/ClimateImpactLab/xclim@63023d27f89a457c752568ffcec2e9ce9ad7a81a
