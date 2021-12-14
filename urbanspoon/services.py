@@ -1,6 +1,26 @@
 from urbanspoon import core, repository
 
 
+def period_average(
+    inputfile, var, outputfile, periods=[("2020", "2040"), ("2040", "2060"), ("2060", "2080"), ("2080", "2100")],
+):
+
+    """
+    Produces a dataset containing period averages of 'var' from an input dataset path.
+
+    Parameters
+    ---------
+    inputfile : str
+        path to data file.
+    var : str
+        variable name in dataset
+    outputfile: str or None
+    periods: list of tuple of str
+    """
+
+    #TODO first two lines of map_period_average + write dataset
+    Raise NotImplementedError
+
 def map_period_average(
     inputfile, var, color_bar_range, outputfile, periods=[("2020", "2040"), ("2040", "2060"), ("2060", "2080"), ("2080", "2100")], format="png"
 ):
