@@ -204,4 +204,5 @@ def plot_colored_timeseries(da, title, units):
         subda = material["temporal_data"]
         subda.plot(label=name, linestyle=material["linestyle"], color=material["color"])
     plt.legend()
-    plt.title("{} {}".format(title, units))
+    plt.ylabel("{}".format(units))
+    plt.title("{}".format(title))
