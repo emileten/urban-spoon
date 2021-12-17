@@ -8,23 +8,23 @@ from urbanspoon.tests.conftest import (
 from urbanspoon import core
 
 
-def test_xr_year_average():
+def test_xr_average_across_days_of_year():
 
     fakedata = spatio_temporal_gcm_factory(
         x=np.array([1, 2, 3, 4])[:, np.newaxis, np.newaxis],
         lat=np.ones(1),
         lon=np.ones(1),
     )
-    actual = core.xr_year_average(fakedata)
+    actual = core.xr_average_across_days_of_year(fakedata)
     assert actual.shape == (1, 1, 1)
     assert actual.values[0, 0, 0] == 2.5
 
 
-def test_xr_period_average():
+def test_apply_xr_collapse_across_time():
     fakedata = spatio_temporal_gcm_factory(
         x=np.ones(720)[:, np.newaxis, np.newaxis], lat=np.ones(1), lon=np.ones(1)
     )
-    actual = core.xr_period_average(
+    actual = core.apply_xr_collapse_across_time(
         fakedata, [("1995", "1996"), ("1996", "1997")]
     )
     assert all(x in actual for x in ["1995_1996", "1996_1997"])
@@ -32,19 +32,19 @@ def test_xr_period_average():
     assert actual["1995_1996"].values[0, 0] == 1
 
 
-def test_xr_conditional_time_average():
+def test_xr_collapse_across_time():
 
     fakedata = spatio_temporal_gcm_factory(
         x=np.array([1, 2, 3, 4])[:, np.newaxis, np.newaxis],
         lat=np.ones(1),
         lon=np.ones(1),
     )
-    actual = core.xr_conditional_time_average(fakedata, ("1995-01-01", "1995-01-02"))
+    actual = core.xr_collapse_across_time(fakedata, ("1995-01-01", "1995-01-02"))
     assert actual.shape == (1, 1)
     assert actual.values[0, 0] == 1.5
 
 
-def test_xr_weighted_spatial_average():
+def test_xr_collapse_across_space():
     fakedata = spatial_gcm_factory(
         x=np.array([[1, 2], [3, 4]]), lat=np.array([1, 2]), lon=np.array([1, 2])
     )
@@ -56,19 +56,19 @@ def test_xr_weighted_spatial_average():
     )
     den = np.cos(1 * np.pi / 180.0) * 2 + np.cos(2 * np.pi / 180.0) * 2
     expected = num / den
-    actual = core.xr_weighted_spatial_average(fakedata)
+    actual = core.xr_collapse_across_space(fakedata)
     assert actual.shape == ()
     np.testing.assert_almost_equal(expected, actual.values.item())
 
 @pytest.mark.skip(reason="unimplemented")
-def test_xr_collapse_to_time_series():
+def test_xr_collapse_to_global_time_series():
 
     # TODO
     raise NotImplementedError
 
 
 @pytest.mark.skip(reason="unimplemented")
-def test_xr_yearly_count():
+def test_xr_count_across_days_of_year():
 
     # TODO
     raise NotImplementedError
