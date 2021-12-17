@@ -6,7 +6,7 @@ import cartopy.feature as cfeature
 from matplotlib import cm
 import xclim as xc
 
-def xr_collapse_to_time_series(da):
+def xr_collapse_to_global_time_series(da):
     """
     Collapses an array across days of a year and then across space.
 
@@ -22,63 +22,8 @@ def xr_collapse_to_time_series(da):
 
     raise NotImplementedError
 
-def xr_period_average(
-    da, slices=[("2020", "2040"), ("2040", "2060"), ("2060", "2080"), ("2080", "2100")]
-):
 
-    """
-    Groups an array by time slices and collapses each slice across time.
-
-    Parameters
-    ----------
-    da : xr.DataArray
-        with 'time' dimension
-    slices : list of tuple of str
-    Returns
-    ------
-    dict of data array each key representing the given slice
-    """
-
-    results = {}
-    for sl in slices:
-        results[f"{sl[0]}_{sl[1]}"] = xr_conditional_time_average(da=da, time_slice=sl)
-    return results
-
-
-def xr_conditional_time_average(da, time_slice=None):
-    """
-    Slices an array along time and averages across time.
-
-    Parameters
-    ----------
-    da : xr.DataArray
-        with 'time' dimension
-    time_slice : tuple of str or None
-        first and last date of sub-period to keep.
-    Returns
-    ------
-    data array with 'time' dropped
-    """
-
-    return da.sel(time=slice(time_slice[0], time_slice[1])).mean("time")
-
-def xr_year_average(da):
-    """
-    Collapses an array across days of each year.
-
-    Parameters
-    ----------
-    da: xr.DataArray
-        with 'time' dimension
-
-    Returns
-    -------
-    xr.DataArray with a 'year' dimension instead of 'time'
-    """
-
-    return da.groupby("time.year").mean()
-
-def xr_weighted_spatial_average(da, weighting="GMST"):
+def xr_collapse_across_space(da, weighting="GMST"):
 
     """
     Collapses an array across weighted longitude and latitude.
@@ -107,7 +52,64 @@ def xr_weighted_spatial_average(da, weighting="GMST"):
 
     return out
 
-def xr_yearly_count(da, count_above=95.):
+
+def apply_xr_collapse_across_time(
+    da, slices=[("2020", "2040"), ("2040", "2060"), ("2060", "2080"), ("2080", "2100")]
+):
+
+    """
+    Groups an array by time slices and collapses each slice across time.
+
+    Parameters
+    ----------
+    da : xr.DataArray
+        with 'time' dimension
+    slices : list of tuple of str
+    Returns
+    ------
+    dict of data array each key representing the given slice
+    """
+
+    results = {}
+    for sl in slices:
+        results[f"{sl[0]}_{sl[1]}"] = xr_collapse_across_time(da=da, time_slice=sl)
+    return results
+
+
+def xr_collapse_across_time(da, time_slice=("2080", "2100")):
+    """
+    Slices an array along time and averages across time.
+
+    Parameters
+    ----------
+    da : xr.DataArray
+        with 'time' dimension
+    time_slice : tuple of str
+        first and last date of sub-period to keep.
+    Returns
+    ------
+    data array with 'time' dropped
+    """
+
+    return da.sel(time=slice(time_slice[0], time_slice[1])).mean("time")
+
+def xr_average_across_days_of_year(da):
+    """
+    Collapses an array across days of each year.
+
+    Parameters
+    ----------
+    da: xr.DataArray
+        with 'time' dimension
+
+    Returns
+    -------
+    xr.DataArray with a 'year' dimension instead of 'time'
+    """
+
+    return da.groupby("time.year").mean()
+
+def xr_count_across_days_of_year(da, count_above=95.):
 
     """
     Parameters

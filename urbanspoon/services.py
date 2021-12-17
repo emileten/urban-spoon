@@ -62,7 +62,7 @@ def map_period_average(
     """
 
     da = repository.read_array(inputfile, var)
-    da_dict = core.xr_period_average(da=da, slices=periods)
+    da_dict = core.apply_xr_collapse_across_time(da=da, slices=periods)
     repository.write_plot(out=outputfile,
                           format=format,
                           da=da_dict,
