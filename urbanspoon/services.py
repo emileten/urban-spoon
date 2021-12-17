@@ -40,7 +40,7 @@ def collapse_to_time_series(
     #TODO
     raise NotImplementedError
 
-def map_period_average(
+def write_period_average(
     inputfile, var, color_bar_range, outputfile, periods=[("2020", "2040"), ("2040", "2060"), ("2060", "2080"), ("2080", "2100")], format="png"
 ):
 

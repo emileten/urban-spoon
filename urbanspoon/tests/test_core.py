@@ -63,15 +63,24 @@ def test_xr_collapse_across_space():
 @pytest.mark.skip(reason="unimplemented")
 def test_xr_collapse_to_global_time_series():
 
-    # TODO
-    raise NotImplementedError
+    fakedata = spatio_temporal_gcm_factory(
+        x=np.array([1, 2, 3, 4])[:, np.newaxis, np.newaxis],
+        lat=np.ones(1),
+        lon=np.ones(1),
+    )
+    actual = core.xr_collapse_to_global_time_series(fakedata)
+    assert len(actual.dims) == 1 and actual.dims[0] == "year"
+    assert actual.values[0] == 2.5
 
 
 @pytest.mark.skip(reason="unimplemented")
 def test_xr_count_across_days_of_year():
 
-    # TODO
-    raise NotImplementedError
+    fakedata = time_series_factory(x=np.arange(1, 366))
+    result = core.xr_count_across_days_of_year(fakedata, 360)
+    expected = 5
+    assert len(result.dims)==1 and result.dims[0]=='time'
+    assert result.values.item() == expected
 
 
 @pytest.mark.skip(reason="unimplemented")
