@@ -2,7 +2,10 @@ from urbanspoon import core, repository
 
 
 def period_average(
-    inputfile, var, outputfile, periods=[("2020", "2040"), ("2040", "2060"), ("2060", "2080"), ("2080", "2100")],
+    inputfile,
+    var,
+    outputfile,
+    periods=[("2020", "2040"), ("2040", "2060"), ("2060", "2080"), ("2080", "2100")],
 ):
 
     """
@@ -18,8 +21,9 @@ def period_average(
     periods: list of tuple of str
     """
 
-    #TODO
+    # TODO
     raise NotImplementedError
+
 
 def collapse_to_time_series(
     inputfile, var, outputfile,
@@ -37,11 +41,17 @@ def collapse_to_time_series(
     outputfile: str or None
     """
 
-    #TODO
+    # TODO
     raise NotImplementedError
 
+
 def write_period_average(
-    inputfile, var, color_bar_range, outputfile, periods=[("2020", "2040"), ("2040", "2060"), ("2060", "2080"), ("2080", "2100")], format="png"
+    inputfile,
+    var,
+    color_bar_range,
+    outputfile,
+    periods=[("2020", "2040"), ("2040", "2060"), ("2060", "2080"), ("2080", "2100")],
+    format="png",
 ):
 
     """
@@ -63,11 +73,12 @@ def write_period_average(
 
     da = repository.read_array(inputfile, var)
     da_dict = core.apply_xr_collapse_across_time(da=da, slices=periods)
-    repository.write_plot(out=outputfile,
-                          format=format,
-                          da=da_dict,
-                          plot_func=core.plot_colored_maps,
-                          common_title=f"{var} periods average",
-                          color_bar_range=color_bar_range,
-                          units=da.attrs["units"]
-                          )
+    repository.write_plot(
+        out=outputfile,
+        format=format,
+        da=da_dict,
+        plot_func=core.plot_colored_maps,
+        common_title=f"{var} periods average",
+        color_bar_range=color_bar_range,
+        units=da.attrs["units"],
+    )

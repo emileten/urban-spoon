@@ -6,6 +6,7 @@ import cartopy.feature as cfeature
 from matplotlib import cm
 import xclim as xc
 
+
 def xr_collapse_to_global_time_series(da):
     """
     Collapses an array across days of a year and then across space.
@@ -95,6 +96,7 @@ def xr_collapse_across_time(da, time_slice=("2080", "2100")):
 
     return da.sel(time=slice(time_slice[0], time_slice[1])).mean("time")
 
+
 def xr_average_across_days_of_year(da):
     """
     Collapses an array across days of each year.
@@ -111,7 +113,8 @@ def xr_average_across_days_of_year(da):
 
     return da.groupby("time.year").mean()
 
-def xr_count_across_days_of_year(da, count_above=95.):
+
+def xr_count_across_days_of_year(da, count_above=95.0):
 
     """
     Parameters
@@ -126,7 +129,7 @@ def xr_count_across_days_of_year(da, count_above=95.):
     """
 
     da_count = da.where(da > count_above).groupby("time.year").count()
-    da_count = da_count.rename(year='time')
+    da_count = da_count.rename(year="time")
     return da_count
 
 
@@ -154,7 +157,10 @@ def plot_colored_maps(da, common_title, units, color_bar_range):
     """
 
     fig, axes = plt.subplots(
-        1, len(da), figsize=(30, 8), subplot_kw={"projection": ccrs.PlateCarree()}
+        1,
+        len(da),
+        figsize=(6.4 * 3, 4.8 * 3),
+        subplot_kw={"projection": ccrs.PlateCarree()},
     )
     cmap = cm.cividis
     i = 0
@@ -174,17 +180,26 @@ def plot_colored_maps(da, common_title, units, color_bar_range):
         axes[i].set_title("{} {}".format(common_title, name))
 
         i = i + 1
+
     # Adjust the location of the subplots on the page to make room for the colorbar
     # fig.subplots_adjust(
     #     bottom=0.02, top=0.9, left=0.05, right=0.95, wspace=0.1, hspace=0.01
     # )
 
     # Add a colorbar axis at the bottom of the graph
-    #cbar_ax = fig.add_axes([0.2, 0.2, 0.3, 0.03])
+    # cbar_ax = fig.add_axes([0.2, 0.2, 0.3, 0.03])
 
     # Draw the colorbar
     cbar_title = units
-    cbar = fig.colorbar(im, label=cbar_title, orientation="horizontal", ax=axes.ravel().tolist(), fraction=0.046, pad=0.04)
+    cbar = fig.colorbar(
+        im,
+        label=cbar_title,
+        orientation="horizontal",
+        ax=axes.ravel().tolist(),
+        fraction=0.046,
+        pad=0.04,
+    )
+
 
 def plot_colored_timeseries(da, title, units):
 
@@ -199,7 +214,7 @@ def plot_colored_timeseries(da, title, units):
     units : str
     """
 
-    fig = plt.figure(figsize=(12, 4))
+    fig = plt.figure(figsize=(6.4 * 3, 4.8 * 3))
     for name, material in da.items():
         subda = material["temporal_data"]
         subda.plot(label=name, linestyle=material["linestyle"], color=material["color"])

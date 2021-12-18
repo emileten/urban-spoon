@@ -60,6 +60,7 @@ def test_xr_collapse_across_space():
     assert actual.shape == ()
     np.testing.assert_almost_equal(expected, actual.values.item())
 
+
 @pytest.mark.skip(reason="unimplemented")
 def test_xr_collapse_to_global_time_series():
 
@@ -79,7 +80,7 @@ def test_xr_count_across_days_of_year():
     fakedata = time_series_factory(x=np.arange(1, 366))
     result = core.xr_count_across_days_of_year(fakedata, 360)
     expected = 5
-    assert len(result.dims)==1 and result.dims[0]=='time'
+    assert len(result.dims) == 1 and result.dims[0] == "time"
     assert result.values.item() == expected
 
 

@@ -1,7 +1,8 @@
 import numpy as np
 import xarray as xr
 
-#TODO convert all that stuff to pytest.fixtures
+# TODO convert all that stuff to pytest.fixtures
+
 
 def time_series_factory(x=np.random.rand(365), start_date="1995-01-01"):
 
@@ -29,14 +30,17 @@ def spatio_temporal_gcm_factory(
     start_date="1995-01-01",
     lat=np.arange(-90, 90.5, 0.5),
     lon=np.arange(-180, 180.5, 0.5),
-    units="someunit"
+    units="someunit",
 ):
 
     time = xr.cftime_range(
         start=start_date, freq="D", periods=len(x), calendar="standard"
     )
     out = xr.DataArray(
-        data=x, coords={"time": time, "lat": lat, "lon": lon}, dims=["time", "lat", "lon"], attrs={"units": units}
+        data=x,
+        coords={"time": time, "lat": lat, "lon": lon},
+        dims=["time", "lat", "lon"],
+        attrs={"units": units},
     )
 
     return out
