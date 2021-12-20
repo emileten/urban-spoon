@@ -142,6 +142,27 @@ def xc_maximum_consecutive_dry_days(da, thresh=0.0005):
 def xc_rx5day(da):
     return xc.indicators.icclim.RX5day(da, freq="YS")
 
+def xr_quantiles_across_time_by_cell(da, q, cells):
+
+    """
+    Parameters
+    ----------
+    da : xr.DataArray
+    q : Any
+    cells : list of tuples
+
+    Returns
+    -------
+    list of data arrays
+    """
+
+    results = {}
+    for c in cells:
+        results[c] = da.sel(lat=c[0], lon=c[1], drop=True).quantile(q=q, dim='time')
+    return results
+
+
+
 
 def plot_colored_maps(da, common_title, units, color_bar_range):
     """

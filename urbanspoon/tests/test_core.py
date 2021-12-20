@@ -7,6 +7,16 @@ from urbanspoon.tests.conftest import (
 )
 from urbanspoon import core
 
+def test_xr_quantile_across_time_by_cell():
+
+    fakedata = spatio_temporal_gcm_factory(x=np.transpose(np.array([[np.arange(1,101)]])).repeat(2, 1).repeat(2, 2),
+                                           lon=[-180., 180.],
+                                           lat=[-90., 90.])
+
+    pick_cells = [(-90., -180.), (90., 180.)]
+    actual = core.xr_quantiles_across_time_by_cell(da=fakedata, q=[0.1, 0.2], cells=pick_cells)
+    for c in pick_cells:
+        assert actual[c].sel(quantile=0.1).values.item() == 10.9
 
 def test_xr_average_across_days_of_year():
 
